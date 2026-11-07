@@ -1,20 +1,18 @@
 using BepInEx;
-using BepInEx.Logging;
-using HarmonyLib;
+using CharmCore.Api;
 using UnityEngine;
 
 namespace CharmSmartwatch
 {
 	[BepInPlugin(PluginGuid, PluginName, PluginVersion)]
+	[BepInDependency("com.osmar.Pockets", BepInDependency.DependencyFlags.HardDependency)]
+	[BepInDependency("com.osmar.CharmCore", BepInDependency.DependencyFlags.HardDependency)]
 	public class CharmSmartwatchPlugin : BaseUnityPlugin
 	{
-		// Se reemplaza com.osmar por el parámetro AuthorId del template.json
-		// y CharmSmartwatch por el nombre del proyecto (sourceName).
 		public const string PluginGuid = "com.osmar.CharmSmartwatch";
 		public const string PluginName = "CharmSmartwatch";
 		public const string PluginVersion = "1.0.0";
 
-		internal Harmony? Harmony { get; set; }
 		internal static new BepInEx.Logging.ManualLogSource Logger { get; private set; } = null!;
 
 		private void Awake()
@@ -25,17 +23,12 @@ namespace CharmSmartwatch
 			this.gameObject.transform.parent = null;
 			this.gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-			ConfigurationController.Initialize(this.Config);
-
-			Harmony = new Harmony(Info.Metadata.GUID);
-			Harmony.PatchAll();
+			// Registering binds Enabled, WearPercent, CooldownSeconds and the Debug section (DebugMode) in this mod's config file.
+			SmartwatchCharm charm = new SmartwatchCharm();
+			CharmsApi.Register(charm, Config);
+			this.gameObject.AddComponent<SteadyPulse>().Charm = charm;
 
 			Logger.LogInfo($"{PluginName} {PluginVersion} loaded!");
-		}
-
-		internal void Unpatch()
-		{
-			Harmony?.UnpatchSelf();
 		}
 	}
 }
