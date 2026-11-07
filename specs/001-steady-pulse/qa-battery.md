@@ -8,16 +8,20 @@ Set `DebugMode = true` in the `Debug` section of `BepInEx/config/com.osmar.Charm
 ## Single player
 - [ ] Log shows `Charm registered: Smartwatch - Steady Pulse` and `CharmSmartwatch 1.0.0 loaded!`.
 - [ ] Store the valuable in a slot: the slot shows its picture and value.
-- [ ] TODO: trigger the power and check the effect, the wear on the valuable and the cooldown veil on the slot.
+- [ ] On a level with overcharge (moon level 2 or higher), without the Smartwatch: hold a monster and see the overcharge build up.
+- [ ] Store the Smartwatch and repeat: no overcharge, the grab beam never overloads.
+- [ ] While holding the monster, the Smartwatch value drops about 1.5% of its original value per second; releasing the monster stops the wear.
+- [ ] Holding a normal valuable or a cart does not wear the Smartwatch.
+- [ ] On an early level (below moon level 2) holding a monster does not wear the Smartwatch.
 - [ ] Take the valuable out: the power stops.
 - [ ] Use it until the valuable breaks: the slot empties, the power stops, no errors in the log.
 
 ## Settings
-- [ ] `CooldownSeconds = 0`: no veil, no pause. `WearPercent = 0`: no wear.
+- [ ] `WearPercent = 0`: no wear. `GraceSeconds = 5`: no wear during the first 5 seconds of each hold, and the timer restarts after releasing.
 - [ ] Charm `Enabled = false`: no effect and no wear. CharmCore `Enabled = false`: nothing works.
 
 ## Multiplayer (host and client)
-- [ ] The effect works on the client, the value drops on both machines.
+- [ ] On a client carrying the Smartwatch the overcharge is blocked and the value drops on both machines.
 - [ ] Host settings override the client's.
 - [ ] Client leaves and rejoins: no stuck veil.
 

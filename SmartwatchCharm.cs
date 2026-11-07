@@ -10,8 +10,12 @@ namespace CharmSmartwatch
 		internal SmartwatchCharm()
 			: base("Smartwatch", "Smartwatch - Steady Pulse", defaultWearPercent: 1.5f, defaultCooldownSeconds: null, PrefabName)
 		{
-			// Extra host-synced numbers for this power go here, for example:
-			// Amount = AddSetting("Amount", 30f, 1f, 100f, "Description for the config file.");
+			// Wear is per second of holding a monster, not per use.
+			WearsPerSecond = true;
+			GraceSeconds = AddSetting("GraceSeconds", 0f, 0f, 30f, "Seconds you must keep holding a monster before the Smartwatch starts to wear. 0 wears from the first moment.");
 		}
+
+		/// <summary>Seconds of continuous holding before wear starts.</summary>
+		internal CharmSetting GraceSeconds { get; }
 	}
 }

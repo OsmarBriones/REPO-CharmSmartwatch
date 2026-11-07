@@ -1,4 +1,5 @@
 using BepInEx;
+using HarmonyLib;
 using CharmCore.Api;
 using UnityEngine;
 
@@ -13,6 +14,8 @@ namespace CharmSmartwatch
 		public const string PluginName = "CharmSmartwatch";
 		public const string PluginVersion = "1.0.0";
 
+		internal static SmartwatchCharm? Charm { get; private set; }
+
 		internal static new BepInEx.Logging.ManualLogSource Logger { get; private set; } = null!;
 
 		private void Awake()
@@ -23,9 +26,11 @@ namespace CharmSmartwatch
 			this.gameObject.transform.parent = null;
 			this.gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-			// Registering binds Enabled, WearPercent, CooldownSeconds and the Debug section (DebugMode) in this mod's config file.
+			// Registering binds Enabled, WearPercent, GraceSeconds and the Debug section (DebugMode) in this mod's config file.
 			SmartwatchCharm charm = new SmartwatchCharm();
+			Charm = charm;
 			CharmsApi.Register(charm, Config);
+			new Harmony(PluginGuid).PatchAll();
 			this.gameObject.AddComponent<SteadyPulse>().Charm = charm;
 
 			Logger.LogInfo($"{PluginName} {PluginVersion} loaded!");

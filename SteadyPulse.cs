@@ -3,30 +3,53 @@ using UnityEngine;
 namespace CharmSmartwatch
 {
 	/// <summary>
-	/// Steady Pulse: holding a monster never overcharges you.
-	/// TODO: implement the power. Rules every charm follows:
-	/// - Only act while <c>Charm.IsActive</c> (the valuable is in the local player's pocket and everything is on).
-	/// - Call <c>Charm.TryUse()</c> at the moment the power triggers and apply the effect only when it returns true:
-	///   that starts the cooldown and wears the valuable. For wear over time use <c>Charm.TryUse(percent)</c> or <c>Charm.Wear(percent)</c>.
-	/// - Write debug detail with <c>Charm.LogDebug(...)</c>, never with the plugin logger (a test enforces it).
+	/// Steady Pulse: while the owner holds a monster, the Smartwatch wears per second. The overcharge itself is skipped by
+	/// <see cref="Patches.SemiFunc_EnemyOvercharge_Patch"/>; this component only decides when the power is "working" so the
+	/// wear matches. Everything is local to the owner, so no network is needed.
 	/// </summary>
 	internal sealed class SteadyPulse : MonoBehaviour
 	{
+		/// <summary>Overcharge only exists from this moon level on (see PhysGrabber.PhysGrabOverCharge).</summary>
+		private const int FirstOverchargeMoonLevel = 2;
+
+		private float heldSeconds;
+		private bool logged;
+
 		internal SmartwatchCharm Charm { get; set; } = null!;
 
 		private void Update()
 		{
-			if (Charm == null || !Charm.IsActive)
+			if (Charm == null || !Charm.IsActive || !IsHoldingMonster())
+			{
+				heldSeconds = 0f;
+				logged = false;
+				return;
+			}
+
+			heldSeconds += Time.deltaTime;
+			if (heldSeconds < Charm.GraceSeconds.Value)
 			{
 				return;
 			}
 
-			// TODO: detect the moment the power should trigger, then:
-			// if (Charm.TryUse())
-			// {
-			//     ... apply the effect ...
-			//     Charm.LogDebug("Steady Pulse triggered");
-			// }
+			Charm.WearForSeconds(Time.deltaTime);
+			if (!logged)
+			{
+				logged = true;
+				Charm.LogDebug($"Steady Pulse: holding a monster, overcharge blocked and wear running ({Charm.WearPercent:0.##}%/s)");
+			}
+		}
+
+		private static bool IsHoldingMonster()
+		{
+			PhysGrabber? grabber = PhysGrabber.instance;
+			if (grabber == null || !grabber.grabbed || grabber.grabbedPhysGrabObject == null || grabber.grabbedPhysGrabObject.enemyRigidbody == null)
+			{
+				return false;
+			}
+
+			// Below this level the game never overcharges, so the power has nothing to block and must not wear.
+			return SemiFunc.MoonLevel() >= FirstOverchargeMoonLevel;
 		}
 	}
 }

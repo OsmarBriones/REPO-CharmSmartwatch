@@ -28,11 +28,26 @@ public class GameContractTests
 	// ---- Members we read or write ----
 
 	[TestMethod]
-	public void Valuable_HasTheValueFields()
+	public void SemiFunc_EnemyOvercharge_HasTheExpectedSignature()
 	{
-		// TODO: add one RequireField / RequireMethod line for every game member this charm's effect reads, writes or patches,
-		// so a game update that renames or removes one fails here with a clear message.
-		RequireField("ValuableObject", "dollarValueCurrent");
+		// Patched by SemiFunc_EnemyOvercharge_Patch: (PhysGrabObject, EnemyParent.Difficulty, float).
+		RequireMethod("SemiFunc", "EnemyOvercharge", 3);
+		RequireMethod("SemiFunc", "MoonLevel", 0);
+	}
+
+	[TestMethod]
+	public void PhysGrabObject_HasTheGrabFields()
+	{
+		RequireField("PhysGrabObject", "grabbedLocal");
+		RequireField("PhysGrabObject", "enemyRigidbody");
+	}
+
+	[TestMethod]
+	public void PhysGrabber_HasTheGrabState()
+	{
+		RequireField("PhysGrabber", "instance");
+		RequireField("PhysGrabber", "grabbed");
+		RequireField("PhysGrabber", "grabbedPhysGrabObject");
 	}
 
 	// ---- Helpers ----
