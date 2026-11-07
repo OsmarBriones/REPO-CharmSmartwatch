@@ -41,3 +41,12 @@ Provided by CharmCore: the `Debug.DebugMode` setting (off by default) places the
 - Looked up by exact prefab name; a game update that renames the prefab needs a mod update.
 - Only prevents overcharge from grabbed monsters, not other overcharge sources.
 - Not verified in game (code and build only).
+
+## Runtime hygiene
+
+- **References and level state:** fixed. `SteadyPulse` remembers the holding time and a logged flag; `SmartwatchCharm` now overrides `OnLevelEnded` and resets them through `SteadyPulse.ResetState()`. The charm holds the component only through an instance property; the component lives on the plugin's own persistent object, not on a level object, and no static field holds a game object.
+- **Per-frame work:** `SteadyPulse.Update` returns early when the charm is inactive or nothing is held; the check reads the game's own `PhysGrabber.instance` and allocates nothing. The `SemiFunc.EnemyOvercharge` prefix exits on the first checks when the charm is inactive and allocates nothing.
+- **Debug logs:** fixed. The `LogDebug` in `Update` (already logged once per hold) is now guarded with `if (Charm.DebugMode)`.
+- **Changes to the game:** nothing needed. The mod only skips the game's overcharge call while active; it writes nothing to the game, so there is nothing to restore.
+- **Static game objects and Find calls:** none.
+- Known limit outside this mod: while the charm is active, CharmCore's `IsActive` and `CharmSetting.Value` build their host-setting key strings on each call; that is CharmCore's code and was left alone.

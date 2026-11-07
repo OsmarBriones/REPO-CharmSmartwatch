@@ -36,8 +36,18 @@ namespace CharmSmartwatch
 			if (!logged)
 			{
 				logged = true;
-				Charm.LogDebug($"Steady Pulse: holding a monster, overcharge blocked and wear running ({Charm.WearPercent:0.##}%/s)");
+				if (Charm.DebugMode)
+				{
+					Charm.LogDebug($"Steady Pulse: holding a monster, overcharge blocked and wear running ({Charm.WearPercent:0.##}%/s)");
+				}
 			}
+		}
+
+		/// <summary>Forgets the holding time (called when a level ends).</summary>
+		internal void ResetState()
+		{
+			heldSeconds = 0f;
+			logged = false;
 		}
 
 		private static bool IsHoldingMonster()

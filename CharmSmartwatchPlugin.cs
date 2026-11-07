@@ -31,7 +31,9 @@ namespace CharmSmartwatch
 			Charm = charm;
 			CharmsApi.Register(charm, Config);
 			new Harmony(PluginGuid).PatchAll();
-			this.gameObject.AddComponent<SteadyPulse>().Charm = charm;
+			SteadyPulse pulse = this.gameObject.AddComponent<SteadyPulse>();
+			pulse.Charm = charm;
+			charm.Pulse = pulse;
 
 			Logger.LogInfo($"{PluginName} {PluginVersion} loaded!");
 		}

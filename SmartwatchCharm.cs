@@ -17,5 +17,13 @@ namespace CharmSmartwatch
 
 		/// <summary>Seconds of continuous holding before wear starts.</summary>
 		internal CharmSetting GraceSeconds { get; }
+
+		/// <summary>The effect component on the plugin's own persistent object (not a level object); set by the plugin.</summary>
+		internal SteadyPulse? Pulse { get; set; }
+
+		protected override void OnLevelEnded()
+		{
+			Pulse?.ResetState();
+		}
 	}
 }
