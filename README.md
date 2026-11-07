@@ -32,7 +32,7 @@ Settings are in `com.osmar.CharmSmartwatch.cfg` inside `BepInEx/config`, section
 - `WearPercent` (default `1.5`): share of the valuable's original value lost for each second you hold a monster.
 - `GraceSeconds` (default `0`, 0 to 30): seconds you must hold a monster before the Smartwatch starts to wear.
 
-Section `Debug`: `DebugMode` (default `false`) places a Smartwatch on the floor in front of you when a level starts (host or singleplayer) and writes extra log lines. For testing.
+Section `Debug`: `DebugMode` (default `false`) places a Smartwatch on the floor in front of you when a level starts (host or singleplayer) and writes extra log lines. For testing. `SpawnNow` (default `false`, needs `DebugMode`): set it to `true` while a level is running to place one right away; it switches itself back off.
 
 ## Issues & Bug Reports
 The official way to report issues, suggest improvements, or submit feedback is by opening an issue on the official GitHub repository:
